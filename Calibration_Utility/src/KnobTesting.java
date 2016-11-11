@@ -46,7 +46,7 @@ public class KnobTesting extends PApplet{
     	c = Color.RED;
     	bg = Color.WHITE;
     	display = false;
-        String porty = JOptionPane.showInputDialog("Please input a camera port number (default is '0')");
+        String porty = JOptionPane.showInputDialog("Please input a camera port number (To test, enter: 670)");
         if(Integer.parseInt(porty) == 670)
         	parsy = true;
         else

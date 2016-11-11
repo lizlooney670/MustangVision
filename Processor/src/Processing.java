@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.net.Inet4Address;
@@ -16,9 +17,12 @@ public class Processing {
 	private static Scalar lowerHSV, upperHSV;
 	private static boolean runServer;
 	private static Rect bound;
+	private static double proportion;
 	
     public static void main(String[] args) throws IOException{
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        
+        proportion = 1;
         
         //Check if ports file and scalar file exists
         boolean exists = new File("ports.txt").exists();
@@ -79,7 +83,13 @@ public class Processing {
         	            	
         	            	//Find bounding rectangle of image
         	            	bound = ImageUtility.getBoundingRectangle(frame, lowerHSV, upperHSV);
+        	            	double distanceInInches = ImageUtility.getDistance(bound, proportion);
+        	            	
         	            	Imgproc.rectangle(frame, new Point(bound.x, bound.y), new Point(bound.x+bound.width, bound.y+bound.height), new Scalar(255, 0, 0));
+        	            	
+        	            	Color c = Color.BLACK;
+        	            	
+        	            	Imgproc.putText(frame, "Distance: " + distanceInInches, new Point(10, frame.height()-20), Core.FONT_HERSHEY_DUPLEX, 1, new Scalar(c.getRed(), c.getGreen(), c.getBlue()));
         	            	
         	            	//Upload the frame to the server for viewing on any other computer
         	            	byte[] frame2byte = ImageUtility.extractBytes(frame);
