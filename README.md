@@ -39,3 +39,5 @@ UPDATE: 11/10/2016
   - Everything is complete except for the ability to send JSON data to the robot
   
   - Check JSON.java & Envelope.java for more information
+  
+  - I haven't tested the compression method yet....someone should get on that
