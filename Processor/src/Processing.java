@@ -18,9 +18,12 @@ public class Processing {
 	private static boolean runServer;
 	private static Rect bound;
 	private static double proportion;
+	private static NetworkTablesObject networktable;
 	
     public static void main(String[] args) throws IOException{
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        
+        networktable = new NetworkTablesObject("vision");
         
         proportion = 1;
         
@@ -109,8 +112,10 @@ public class Processing {
         
        Runnable relay = new Runnable() {
             public void run() {
+            	networktable.sendData(bound);
+            	/*
             	JSONArray array = JSON.boundingBox(bound);
-            	JSON.writeToPath("testing.txt", array);
+            	JSON.writeToPath("testing.txt", array);*/
             	}	
 	        };
 	        
