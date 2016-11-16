@@ -13,10 +13,20 @@ public class NetworkTablesObject {
 	
 	public void sendData(Rect r)
 	{
-		table.putNumber("x", r.x);
-		table.putNumber("y", r.y);
-		table.putNumber("width", r.width);
-		table.putNumber("height", r.height);
+		if(r != null)
+		{
+			table.putNumber("x", r.x);
+			table.putNumber("y", r.y);
+			table.putNumber("width", r.width);
+			table.putNumber("height", r.height);
+		}
+		else
+		{
+			table.putNumber("x", 0);
+			table.putNumber("y", 0);
+			table.putNumber("width", 0);
+			table.putNumber("height", 0);
+		}
 	}
 
 }

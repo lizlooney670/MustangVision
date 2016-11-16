@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.ServerSocket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
 
@@ -15,13 +16,16 @@ public class Processing {
 
 	private static int portNumber, cameraPort;
 	private static Scalar lowerHSV, upperHSV;
-	private static boolean runServer;
+	private static boolean runServer, stream, running;
 	private static Rect bound;
 	private static double proportion;
 	private static NetworkTablesObject networktable;
+	private static MJPG_Server server;
+	private static ServerSocket serverSocket;
 	
     public static void main(String[] args) throws IOException{
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        stream = false;
         
         networktable = new NetworkTablesObject("vision");
         
@@ -61,12 +65,11 @@ public class Processing {
     	runServer = true;
     	
         //Code to create the MJPG server at a defined port number also define camera port number
-        ServerSocket serverSocket = new ServerSocket(portNumber);
+        serverSocket = new ServerSocket(portNumber);
+        serverSocket.setSoTimeout(5000);
         
         //Create simple monitor
         displayData();
-        
-		MJPG_Server server = new MJPG_Server(serverSocket, "ServerMJPG");
 		
         //Define usb port at which to listen for camera
         VideoCapture camera = new VideoCapture(cameraPort);
@@ -76,13 +79,13 @@ public class Processing {
             
         //Run loop to capture and process images as well as pushing the images in byte form to the MJPG server
 
-        Runnable r = new Runnable() {
+        Runnable processor = new Runnable() {
             public void run() {
             	while(true) { 
                 	if(runServer){
         	        	Mat frame = new Mat();
         	            if(camera.read(frame)) {        	            	
-        	            	System.out.println("Running...");
+        	            	running = true;
         	            	
         	            	//Find bounding rectangle of image
         	            	bound = ImageUtility.getBoundingRectangle(frame, lowerHSV, upperHSV);
@@ -90,38 +93,60 @@ public class Processing {
         	            	
         	            	Imgproc.rectangle(frame, new Point(bound.x, bound.y), new Point(bound.x+bound.width, bound.y+bound.height), new Scalar(255, 0, 0));
         	            	
-        	            	Color c = Color.BLACK;
+        	            	Color c = Color.RED;
         	            	
         	            	Imgproc.putText(frame, "Distance: " + distanceInInches, new Point(10, frame.height()-20), Core.FONT_HERSHEY_DUPLEX, 1, new Scalar(c.getRed(), c.getGreen(), c.getBlue()));
         	            	
-        	            	//Upload the frame to the server for viewing on any other computer
-        	            	byte[] frame2byte = ImageUtility.extractBytes(frame);
-        	            	server.writeToServer(frame2byte);     
+        	            	stream = !serverSocket.isClosed();
+        	            	
+        	            	if(stream){
+	        	            	//Upload the frame to the server for viewing on any other computer
+	        	            	byte[] frame2byte = ImageUtility.extractBytes(frame);
+	        	            	server.writeToServer(frame2byte);  
+        	            	}
         	            }
                 	}
                 	else
                 	{
-                        System.out.println("Camera connection error...");
+                		running = false;
                 	}
                 }
             }
         };
-        
         //Start Thread to image process
-        new Thread(r).start();  
+        new Thread(processor).start();  
         
-       Runnable relay = new Runnable() {
+       statusPrinter();
+        
+	   server = new MJPG_Server(serverSocket, "ServerMJPG");
+	   
+       stream = true; 
+    }
+    
+    private static void statusPrinter() {
+   	 Runnable checks = new Runnable() {
             public void run() {
-            	networktable.sendData(bound);
-            	/*
-            	JSONArray array = JSON.boundingBox(bound);
-            	JSON.writeToPath("testing.txt", array);*/
-            	}	
-	        };
+            	long start = System.currentTimeMillis();
+            	while(true)
+            	{
+                	long current = System.currentTimeMillis();
+                	double seconds = (current - start)/1000;
+	            	networktable.sendData(bound);
+	            		if(seconds > 2)
+	            	{
+	            			if(running)
+	            				System.out.println("Running...");
+	            			else
+	            				System.out.println("Nothing...");
+	            		start = System.currentTimeMillis();
+	            	}
+            	}
+            }
+	   };
 	        
 	   //Start thread to send data to robot
-	   new Thread(relay).start();  
-    }
+	   new Thread(checks).start();  	
+	}
     
     //Create text console panel to monitor application
     public static void displayData() throws UnknownHostException

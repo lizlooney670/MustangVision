@@ -7,6 +7,7 @@ public class MJPG_Server
 {
 	private OutputStream outputStream;
 	private Socket socket;
+	private String server;
 	 
 	/**
 	 * 
@@ -15,6 +16,7 @@ public class MJPG_Server
 	 */
 	public MJPG_Server(ServerSocket serverSocket, String serverName)
 	{
+		server = serverName;
 		try{
 			this.socket = serverSocket.accept();
 			outputStream = socket.getOutputStream();
@@ -43,11 +45,11 @@ public class MJPG_Server
 	 * Place this method inside a while loop in your program with the new image to constantly write to the server and create a powerful MJPG stream
 	 */
 	public void writeToServer(byte[] data)
-	{
+	{	
 		try{
 	    outputStream.write((
 		        "--BoundaryString\r\n" +
-		        "Content-type: image/jpg\r\n" +
+		        "Content-type: image/mjpg\r\n" +
 		        "Content-Length: " +
 		        data.length +
 		        "\r\n\r\n").getBytes());
