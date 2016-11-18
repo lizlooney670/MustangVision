@@ -6,19 +6,19 @@ import java.net.Socket;
 public class MJPG_Server 
 {
 	private OutputStream outputStream;
-	private String serverName;
 	private Socket socket;
+	private String server;
 	 
 	/**
 	 * 
 	 * @param serverSocket Create a simple server socket with any open port number on your pc
 	 * @param serverName The name of your server
 	 */
-	public MJPG_Server(ServerSocket serverSocket, String serverName)
+	public MJPG_Server(Socket socket, String serverName)
 	{
-		this.serverName = serverName;
+		this.socket = socket;
+		server = serverName;
 		try{
-			this.socket = serverSocket.accept();
 			outputStream = socket.getOutputStream();
 			outputStream.write((
 			      "HTTP/1.0 200 OK\r\n" +
@@ -45,11 +45,11 @@ public class MJPG_Server
 	 * Place this method inside a while loop in your program with the new image to constantly write to the server and create a powerful MJPG stream
 	 */
 	public void writeToServer(byte[] data)
-	{
+	{	
 		try{
 	    outputStream.write((
 		        "--BoundaryString\r\n" +
-		        "Content-type: image/jpg\r\n" +
+		        "Content-type: image/mjpg\r\n" +
 		        "Content-Length: " +
 		        data.length +
 		        "\r\n\r\n").getBytes());

@@ -14,11 +14,11 @@ public class MJPG_Server
 	 * @param serverSocket Create a simple server socket with any open port number on your pc
 	 * @param serverName The name of your server
 	 */
-	public MJPG_Server(ServerSocket serverSocket, String serverName)
+	public MJPG_Server(Socket socket, String serverName)
 	{
+		this.socket = socket;
 		server = serverName;
 		try{
-			this.socket = serverSocket.accept();
 			outputStream = socket.getOutputStream();
 			outputStream.write((
 			      "HTTP/1.0 200 OK\r\n" +
