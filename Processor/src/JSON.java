@@ -34,8 +34,12 @@ public class JSON {
 		return rectangle;
 	}
 	
-	public static void sendData(Rect r, double distance)
+	public static JSONObject sendData(Rect r, double distance)
 	{
-		
+		JSONArray bounding_box = boundingBox(r);
+		JSONObject obj = new JSONObject();
+		obj.put("Bounding_Box", bounding_box);
+		obj.put("Distance", distance);
+		return obj;
 	}
 }
