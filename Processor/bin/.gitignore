@@ -1,14 +1,4 @@
+/TextFileToolbox.class
 /DataTool.class
-/ImageUtility.class
-/JSON.class
-/MJPG_Server.class
-/NetworkTablesObject.class
-/Processing$1.class
-/Processing$2.class
-/Processing.class
-/Processing$3.class
-/testing.class
-/MustangMain.class
-/MustangMain$1.class
-/MustangMain$2.class
-/MustangMain$3.class
+/TextIOToolbox.class
+/Server.class

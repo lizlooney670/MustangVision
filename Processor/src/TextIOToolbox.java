@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.opencv.core.Scalar;
 
-public class DataTool{
+public class TextIOToolbox{
 		
 	public static Scalar[] getScalars()
 	{

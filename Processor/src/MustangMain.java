@@ -17,7 +17,7 @@ import org.opencv.videoio.VideoCapture;
 public class MustangMain {
 
 	private static Scalar lowerHSV, upperHSV;
-	private static int portNumber, cameraPort;
+	private static int portNumber, cameraPort, JSONportNumber;
 	private static boolean runStream, runProcessor, isRunningProcessor;
 	private static double distanceProportion = 0, distanceInInches = 0;
 	private static Rect boundingBox;
@@ -31,7 +31,10 @@ public class MustangMain {
         runStream = false;
         runProcessor = true;
         isRunningProcessor = false;
+        
+    	//The proportion is AreaInPixels/DistanceFromObjectInInchesAtSpecifiedArea
         distanceProportion = 1;
+        
         setAllData();
         runServer();
 	}
@@ -71,7 +74,8 @@ public class MustangMain {
         	        	Mat frame = new Mat();
         	            if(camera.read(frame)) {       
         	            	
-        	            	printStatus();
+        	            	isRunningProcessor = true;
+        	    			System.out.println("Running...");
         	            	
         	            	//Find bounding rectangle of image
         	            	boundingBox = ImageUtility.getBoundingRectangle(frame, lowerHSV, upperHSV);
@@ -94,6 +98,7 @@ public class MustangMain {
                 	else
                 	{
                 		isRunningProcessor = false;
+            			System.out.println("Nothing...");
                 	}
                 }
             }
@@ -105,7 +110,6 @@ public class MustangMain {
 	private static void setupServerSocket() throws IOException
 	{
 		socket = new Socket();
-		
 			System.out.println("Server Open");
 			socket = serverSocket.accept();
 			socket.setSoTimeout(5000);
@@ -114,23 +118,15 @@ public class MustangMain {
 		runStream = true; 	
 	}
 	
-	//Check status and print respective of the current status 
-	private static void printStatus()
-	{
-		if(isRunningProcessor)
-			System.out.println("Running...");
-		else
-			System.out.println("Nothing...");
-	}
-	
 	//Print out constant server status and send data to roboRIO
 	private static void sendData() {
 	   	 Runnable r = new Runnable() {
 	            public void run() {
 	            	while(true)
 	            	{
-	                	//THE CODE THAT SENDS DATA TO ROBO RIO
-		            	JSON.sendData(boundingBox, distanceInInches);
+		            	if(boundingBox == null)
+		            		boundingBox = new Rect(0,0,0,0);
+		            	String data = JSON.sendData(boundingBox, distanceInInches);
 	            	}
 	            }
 		   };
@@ -142,10 +138,10 @@ public class MustangMain {
 	//Set the port numbers and HSV scalar barriers
 	private static void setAllData()
     {
-    	Scalar[] s = DataTool.getScalars();
+    	Scalar[] s = TextIOToolbox.getScalars();
     	lowerHSV = s[0];
     	upperHSV = s[1];
-    	int[] i = DataTool.setPorts();
+    	int[] i = TextIOToolbox.setPorts();
     	cameraPort = i[0];
     	portNumber = i[1];
     }
