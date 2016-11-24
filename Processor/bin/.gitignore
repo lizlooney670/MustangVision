@@ -1,4 +1,13 @@
 /TextFileToolbox.class
 /DataTool.class
+<<<<<<< HEAD
 /TextIOToolbox.class
+=======
+/ImageUtility.class
+/JSON.class
+/MJPG_Server.class
+/MustangMain$1.class
+/MustangMain$2.class
+/MustangMain.class
+>>>>>>> origin/master
 /Server.class

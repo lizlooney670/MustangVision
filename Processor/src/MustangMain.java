@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import org.json.simple.JSONObject;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -24,6 +25,7 @@ public class MustangMain {
 	private static ServerSocket serverSocket;
 	private static MJPG_Server server;
 	private static Socket socket;
+	private static int JSON_Socket_Port = 8080;
 
 	public static void main(String[] args) throws IOException
 	{
@@ -56,7 +58,7 @@ public class MustangMain {
     	runProcessingThread(camera);
     	
         //Print out the current status of the server (MJPG SERVER) every 2 seconds
-       sendData();
+      // sendData();
        
        //Check if client is connected and create MJPG Server to stream over
        while(true)
@@ -119,21 +121,45 @@ public class MustangMain {
 	}
 	
 	//Print out constant server status and send data to roboRIO
-	private static void sendData() {
+	/*private static void sendData() throws IOException{
 	   	 Runnable r = new Runnable() {
 	            public void run() {
+<<<<<<< HEAD
 	            	while(true)
 	            	{
 		            	if(boundingBox == null)
 		            		boundingBox = new Rect(0,0,0,0);
 		            	String data = JSON.sendData(boundingBox, distanceInInches);
 	            	}
+=======
+					try {
+						Server s = new Server(JSON_Socket_Port);
+						
+						String data = JSON.sendData(boundingBox, distanceInInches).toJSONString();
+
+		        		String output = "";
+		        		while(true)
+		        		{
+		        			if(s.isConnected())
+		        			{
+		        				s.writeData(data);
+		        				
+		        				byte[] b = s.readData(120);
+		        				output = new String(b, "UTF-8");
+		        				System.out.println(output);
+		        			}
+		        		}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+>>>>>>> origin/master
 	            }
 		   };
 		        
 		   //Start thread to send data to robot
 		   new Thread(r).start();  	
-	}
+	}*/
 	
 	//Set the port numbers and HSV scalar barriers
 	private static void setAllData()
