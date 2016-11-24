@@ -108,6 +108,24 @@ public class MustangMain {
         new Thread(processor).start();  
 	}
 	
+	public void sendData()
+	{
+		Runnable processor = new Runnable() {
+            public void run() {
+            	while(true) 
+            	{ 
+            		
+            		if(boundingBox == null)
+            			boundingBox = new Rect(0, 0, 0, 0);
+            		String data = JSON.sendData(boundingBox, distanceInInches);
+            		
+            		
+            	}
+            }
+        };
+        new Thread(processor).start();
+	}
+	
 	//If client has disconnected, open up port for reconnection, else do nothing
 	private static void setupServerSocket() throws IOException
 	{
@@ -119,47 +137,6 @@ public class MustangMain {
 		server = new MJPG_Server(socket, "HomesteadVision");
 		runStream = true; 	
 	}
-	
-	//Print out constant server status and send data to roboRIO
-	/*private static void sendData() throws IOException{
-	   	 Runnable r = new Runnable() {
-	            public void run() {
-<<<<<<< HEAD
-	            	while(true)
-	            	{
-		            	if(boundingBox == null)
-		            		boundingBox = new Rect(0,0,0,0);
-		            	String data = JSON.sendData(boundingBox, distanceInInches);
-	            	}
-=======
-					try {
-						Server s = new Server(JSON_Socket_Port);
-						
-						String data = JSON.sendData(boundingBox, distanceInInches).toJSONString();
-
-		        		String output = "";
-		        		while(true)
-		        		{
-		        			if(s.isConnected())
-		        			{
-		        				s.writeData(data);
-		        				
-		        				byte[] b = s.readData(120);
-		        				output = new String(b, "UTF-8");
-		        				System.out.println(output);
-		        			}
-		        		}
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
->>>>>>> origin/master
-	            }
-		   };
-		        
-		   //Start thread to send data to robot
-		   new Thread(r).start();  	
-	}*/
 	
 	//Set the port numbers and HSV scalar barriers
 	private static void setAllData()

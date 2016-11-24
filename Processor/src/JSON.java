@@ -19,7 +19,6 @@ public class JSON {
 		return rectangle;
 	}
 	
-<<<<<<< HEAD
 	public static String sendData(Rect r, double distance)
 	{
 		JSONArray bounding = boundingBox(r);
@@ -28,14 +27,6 @@ public class JSON {
 		obj.put("Distance", distance);
 		
 		return obj.toJSONString();
-=======
-	public static JSONObject sendData(Rect r, double distance)
-	{
-		JSONArray bounding_box = boundingBox(r);
-		JSONObject obj = new JSONObject();
-		obj.put("Bounding_Box", bounding_box);
-		obj.put("Distance", distance);
-		return obj;
->>>>>>> origin/master
 	}
+	
 }
