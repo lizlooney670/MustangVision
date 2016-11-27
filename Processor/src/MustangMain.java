@@ -64,7 +64,7 @@ public class MustangMain {
     	runProcessingThread(camera);
     	
         //Print out the current status of the server (MJPG SERVER) every 2 seconds
-      // sendData();
+       sendData();
        
        //Check if client is connected and create MJPG Server to stream over
        while(true)
@@ -114,7 +114,7 @@ public class MustangMain {
         new Thread(processor).start();  
 	}
 	
-	public void sendData() throws IOException
+	public static void sendData() throws IOException
 	{								
 	    Runnable processor = new Runnable() {
             public void run() {

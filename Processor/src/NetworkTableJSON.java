@@ -37,7 +37,6 @@ public class NetworkTableJSON {
 		obj.put("Bounding_Box", bounding);
 		obj.put("Distance", distance);
 		String data = obj.toJSONString();
-		System.out.println(data);
 		table.putString("data", data);
 	}
 	
