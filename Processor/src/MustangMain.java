@@ -115,11 +115,7 @@ public class MustangMain {
 	}
 	
 	public void sendData() throws IOException
-	{						
-		ServerSocket serverSocket = new ServerSocket(JSONportNumber);
-		Socket s = serverSocket.accept();
-	    OutputStream os = s.getOutputStream();
-		
+	{								
 	    Runnable processor = new Runnable() {
             public void run() {
             	while(true) 
