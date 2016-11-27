@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -30,6 +31,7 @@ public class MustangMain {
 	public static void main(String[] args) throws IOException
 	{
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        JSONportNumber = 8081;
         runStream = false;
         runProcessor = true;
         isRunningProcessor = false;
@@ -108,13 +110,17 @@ public class MustangMain {
         new Thread(processor).start();  
 	}
 	
-	public void sendData()
-	{
-		Runnable processor = new Runnable() {
+	public void sendData() throws IOException
+	{						
+		ServerSocket serverSocket = new ServerSocket(JSONportNumber);
+		Socket s = serverSocket.accept();
+	    OutputStream os = s.getOutputStream();
+		
+	    Runnable processor = new Runnable() {
             public void run() {
             	while(true) 
             	{ 
-            		
+				
             		if(boundingBox == null)
             			boundingBox = new Rect(0, 0, 0, 0);
             		String data = JSON.sendData(boundingBox, distanceInInches);
