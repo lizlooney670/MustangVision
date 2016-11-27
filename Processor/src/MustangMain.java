@@ -27,10 +27,14 @@ public class MustangMain {
 	private static MJPG_Server server;
 	private static Socket socket;
 	private static int JSON_Socket_Port = 8080;
+	private static NetworkTableJSON njs;
 
 	public static void main(String[] args) throws IOException
 	{
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        
+        njs = new NetworkTableJSON("vision");
+        
         JSONportNumber = 8081;
         runStream = false;
         runProcessor = true;
@@ -120,12 +124,9 @@ public class MustangMain {
             public void run() {
             	while(true) 
             	{ 
-				
             		if(boundingBox == null)
             			boundingBox = new Rect(0, 0, 0, 0);
-            		String data = JSON.sendData(boundingBox, distanceInInches);
-            		
-            		
+            		njs.sendData(boundingBox, distanceInInches);
             	}
             }
         };
