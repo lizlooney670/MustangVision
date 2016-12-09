@@ -33,7 +33,7 @@ public class MustangMain {
 	{
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         
-        njs = new NetworkTableJSON("vision");
+        njs = new NetworkTableJSON();
         
         JSONportNumber = 8081;
         runStream = false;

@@ -13,9 +13,11 @@ public class NetworkTableJSON {
 	private static NetworkTable table;
 	private static String tableName;
 	
-	public NetworkTableJSON(String string) 
+	public NetworkTableJSON() 
 	{
 		tableName = "vision";
+		NetworkTable.setClientMode();
+		NetworkTable.setIPAddress("127.0.0.1");
 		table = NetworkTable.getTable(tableName);
 	}
 
