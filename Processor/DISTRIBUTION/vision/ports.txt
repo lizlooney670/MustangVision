@@ -1,2 +1,2 @@
 CameraPort:{0}
-IP-Port:{670}
+IP-Port:{671}

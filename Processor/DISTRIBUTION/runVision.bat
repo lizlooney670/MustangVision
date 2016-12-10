@@ -1,2 +1,2 @@
 cd vision
-java -jar HomesteadVision.jar
+java -Xmx2048m -jar HomesteadVision.jar

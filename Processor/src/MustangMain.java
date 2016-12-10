@@ -19,7 +19,7 @@ import org.opencv.videoio.VideoCapture;
 public class MustangMain {
 
 	private static Scalar lowerHSV, upperHSV;
-	private static int portNumber, cameraPort, JSONportNumber;
+	private static int portNumber, cameraPort;
 	private static boolean runStream, runProcessor, isRunningProcessor;
 	private static double distanceProportion = 0, distanceInInches = 0;
 	private static Rect boundingBox;
@@ -33,9 +33,7 @@ public class MustangMain {
 	{
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         
-        njs = new NetworkTableJSON();
-        
-        JSONportNumber = 8081;
+        njs = new NetworkTableJSON("192.168.1.192");
         runStream = false;
         runProcessor = true;
         isRunningProcessor = false;
@@ -82,9 +80,7 @@ public class MustangMain {
         	        	Mat frame = new Mat();
         	            if(camera.read(frame)) {       
         	            	
-        	            	isRunningProcessor = true;
-        	    			System.out.println("Running...");
-        	            	
+        	            	isRunningProcessor = true;        	            	
         	            	//Find bounding rectangle of image
         	            	boundingBox = ImageUtility.getBoundingRectangle(frame, lowerHSV, upperHSV);
         	            	frame = ImageUtility.drawRectangle(frame, boundingBox);
@@ -101,6 +97,10 @@ public class MustangMain {
 	        	            	byte[] frame2byte = ImageUtility.extractBytes(frame);
 	        	            	server.writeToServer(frame2byte);  
         	            	}
+        	            	
+        	            	if(boundingBox == null)
+                    			boundingBox = new Rect(0, 0, 0, 0);
+                    		njs.sendData(boundingBox, distanceInInches);
         	            }
                 	}
                 	else
@@ -114,12 +114,13 @@ public class MustangMain {
         new Thread(processor).start();  
 	}
 	
-	public void sendData() throws IOException
+	public static void sendData()
 	{								
 	    Runnable processor = new Runnable() {
             public void run() {
             	while(true) 
             	{ 
+            		System.out.println("data");
             		if(boundingBox == null)
             			boundingBox = new Rect(0, 0, 0, 0);
             		njs.sendData(boundingBox, distanceInInches);
@@ -158,6 +159,8 @@ public class MustangMain {
     private static void displayData() throws UnknownHostException
     {
     	System.out.println(Inet4Address.getLocalHost().getHostAddress() + ":" + portNumber);
+    	if(!"192.168.1.192".equals(Inet4Address.getLocalHost().getHostAddress()))
+    		System.exit(0);
     	System.out.println("Camera at port: " + cameraPort);
     }
     
